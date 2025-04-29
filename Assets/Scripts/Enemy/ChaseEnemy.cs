@@ -34,7 +34,7 @@ public class ChaseEnemy : MonoBehaviour
 
         distanceToTarget = Vector3.Distance(transform.position, _target.transform.position);
 
-        if (Physics.Raycast(transform.position, directionToTarget, distanceToTarget + 10f, _obstruction))
+        if (Physics.Raycast(transform.position, directionToTarget, distanceToTarget, _obstruction))
             canSeePlayer = false;
         else
             canSeePlayer = true;

@@ -52,7 +52,7 @@ public class PlayerShooting : MonoBehaviour
         {
             Vector3 direction = ShotOrigin.position;
 
-            GameObject currentBullet = Instantiate(SpecialShotPrefab, SpecialShotOrigin.position, Camera.rotation);
+            GameObject specialShot = Instantiate(SpecialShotPrefab, SpecialShotOrigin.position, Camera.rotation);
 
             _canShootSpecial = false;
             dealySpecialCountdown = SpecialCooldown;
