@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -6,20 +7,21 @@ public class ChaseEnemy : MonoBehaviour
     GameObject _target;
     [SerializeField] NavMeshAgent _agent;
     [SerializeField] LayerMask _obstruction;
-    [SerializeField] GameObject Player;
-    bool canSeePlayer = false;
-    float distanceToTarget;
+    bool _canSeePlayer = false;
+    float _distanceToTarget;
+    float _speed;
 
     void Start()
     {
        _target = FindFirstObjectByType<PlayerMovement>().gameObject; 
+       _speed = _agent.speed;
     }
 
     // Update is called once per frame
     void Update()
     {
         Sight();
-        if (canSeePlayer)
+        if (_canSeePlayer)
         {
             if (Vector3.Distance(_agent.transform.position, _target.transform.position) > 3f)
                 _agent.SetDestination(_target.transform.position);
@@ -32,17 +34,23 @@ public class ChaseEnemy : MonoBehaviour
     {
         Vector3 directionToTarget = (_target.transform.position - transform.position).normalized;
 
-        distanceToTarget = Vector3.Distance(transform.position, _target.transform.position);
+        _distanceToTarget = Vector3.Distance(transform.position, _target.transform.position);
 
-        if (Physics.Raycast(transform.position, directionToTarget, distanceToTarget, _obstruction))
-            canSeePlayer = false;
+        if (Physics.Raycast(transform.position, directionToTarget, _distanceToTarget, _obstruction))
+            _canSeePlayer = false;
         else
-            canSeePlayer = true;
+            _canSeePlayer = true;
     }
-    private void OnDrawGizmosSelected()
+
+    public void ChangeSpeed(float newSpeed, float stunTime)
     {
-        Gizmos.color = Color.red;
-        Vector3 direction = (Player.transform.position - transform.position).normalized * distanceToTarget;
-        Gizmos.DrawRay(transform.position, direction);
+        _agent.speed = newSpeed;
+        StartCoroutine(ResetStun(stunTime));
+    }
+
+    private IEnumerator ResetStun(float stunTime)
+    {
+        yield return new WaitForSeconds(stunTime);
+        _agent.speed = _speed;
     }
 }
